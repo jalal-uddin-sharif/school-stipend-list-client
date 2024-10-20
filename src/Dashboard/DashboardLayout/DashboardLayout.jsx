@@ -1,13 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
   Flex,
   Heading,
-  Text,
-  IconButton,
-  useDisclosure,
   VStack,
-  HStack,
   Button,
   Drawer,
   DrawerOverlay,
@@ -15,21 +11,28 @@ import {
   DrawerCloseButton,
   DrawerHeader,
   DrawerBody,
+  IconButton,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { HamburgerIcon } from "@chakra-ui/icons";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useLocation } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const DashboardLayout = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const location = useLocation(); // Get the current location
+  const [activePage, setActivePage] = useState(location.pathname); // State for the active page
 
+  // Function to handle page change
+  const handlePageChange = (path) => {
+    setActivePage(path);
+  };
 
   return (
-    <Flex
-      height="100vh" // Full viewport height
-      width="100vw" // Full viewport width
-    >
+    <Flex height="100vh" width="100vw">
       <Box
-        w={{ base: "full", md: "250px" }} // Sidebar width
+        w={{ base: "full", md: "250px" }}
         bg="blue.600"
         color="white"
         p={5}
@@ -39,16 +42,43 @@ const DashboardLayout = () => {
           Dashboard
         </Heading>
         <VStack spacing={3} align="flex-start">
-          <Button variant="link" color="white">
-            Home
+          <Button
+            variant="link"
+            color={activePage === "/" ? "yellow.400" : "white"}
+            fontSize="lg" // Increased text size
+            onClick={() => handlePageChange("/")}
+          >
+           <Link to="/">Home</Link>
           </Button>
-          <Button variant="link" color="white">
-            <Link to={"/add-new-data"}>Add new data</Link>
+          <Button
+            variant="link"
+            color={activePage === "/add-new-data" ? "yellow.400" : "white"}
+            fontSize="lg"
+            onClick={() => handlePageChange("/add-new-data")}
+          >
+            <Link to="/add-new-data">Add new data</Link>
           </Button>
-          <Button variant="link" color="white">
+          <Button
+            variant="link"
+            color={activePage === "/view-data" ? "yellow.400" : "white"}
+            fontSize="lg"
+            onClick={() => handlePageChange("/view-data")}
+          >
+            <Link to="/view-data">View data</Link>
+          </Button>
+          <Button
+            variant="link"
+            color={activePage === "/settings" ? "yellow.400" : "white"}
+            fontSize="lg"
+            onClick={() => handlePageChange("/settings")}
+          >
             Settings
           </Button>
-          <Button variant="link" color="white">
+          <Button
+            variant="link"
+            color="white"
+            fontSize="lg"
+          >
             Logout
           </Button>
         </VStack>
@@ -63,12 +93,37 @@ const DashboardLayout = () => {
           </DrawerHeader>
           <DrawerBody>
             <VStack spacing={3} align="flex-start">
-              <Button variant="link">Home</Button>
-              <Button variant="link">
+              <Button
+                variant="link"
+                color={activePage === "/" ? "yellow.400" : "black"}
+                onClick={() => handlePageChange("/")}
+              >
+                Home
+              </Button>
+              <Button
+                variant="link"
+                color={activePage === "/add-new-data" ? "yellow.400" : "black"}
+                onClick={() => handlePageChange("/add-new-data")}
+              >
                 <Link to="/add-new-data">Add new data</Link>
               </Button>
-              <Button variant="link">Settings</Button>
-              <Button variant="link">Logout</Button>
+              <Button
+                variant="link"
+                color={activePage === "/view-data" ? "yellow.400" : "black"}
+                onClick={() => handlePageChange("/view-data")}
+              >
+                <Link to="/view-data">View Data</Link>
+              </Button>
+              <Button
+                variant="link"
+                color={activePage === "/settings" ? "yellow.400" : "black"}
+                onClick={() => handlePageChange("/settings")}
+              >
+                Settings
+              </Button>
+              <Button variant="link" color="black">
+                Logout
+              </Button>
             </VStack>
           </DrawerBody>
         </DrawerContent>
@@ -82,15 +137,20 @@ const DashboardLayout = () => {
             display={{ base: "flex", md: "none" }}
             onClick={onOpen}
           />
-          <Heading as="h1" size="xl">
+          <Heading
+            as="h1"
+            size="xl"
+            mb={8}
+            display={{ base: "block", md: "none" }}
+          >
             Dashboard
           </Heading>
         </Flex>
         <Box>
-          <Text fontSize="lg">Welcome to your dashboard!</Text>
-          <Outlet/>
+          <Outlet />
         </Box>
       </Box>
+      <ToastContainer />
     </Flex>
   );
 };
